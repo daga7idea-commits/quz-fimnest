@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { QUESTIONS, RESULTS } from './translations';
 import { AppStep, UserData, OptionId } from './types';
@@ -60,13 +59,13 @@ const App: React.FC = () => {
   }, [answers]);
 
   return (
-    <div className="min-h-screen bg-mystic-black text-white selection:bg-mystic-rose selection:text-white relative overflow-hidden font-cairo">
-      {/* Background Decor - Blobs */}
-      <div className="blob w-[600px] h-[600px] bg-mystic-purple/20 -top-[10%] -right-[10%]"></div>
-      <div className="blob w-[500px] h-[500px] bg-mystic-rose/10 -bottom-[10%] -left-[10%] delay-700"></div>
+    <div className="min-h-screen bg-[#050206] text-white selection:bg-mystic-gold/20 relative overflow-hidden font-cairo">
+      {/* Refined Background Elements */}
+      <div className="blob w-[800px] h-[800px] bg-purple-900/10 -top-[20%] -right-[10%]"></div>
+      <div className="blob w-[600px] h-[600px] bg-rose-900/5 -bottom-[10%] -left-[10%] delay-1000"></div>
       
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-6">
-        <main className="w-full max-w-lg animate-fade-in">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center py-12 px-6">
+        <main className="w-full max-w-xl animate-fade-in flex flex-col items-center">
           {step === AppStep.WELCOME && (
             <WelcomeScreen onStart={handleStartQuiz} isLoading={loading} />
           )}
@@ -87,8 +86,11 @@ const App: React.FC = () => {
           )}
         </main>
 
-        <footer className="mt-12 text-center text-white/10 text-[10px] uppercase tracking-[0.5em] font-light">
-          Mystique & Elegance Portfolio © 2024
+        <footer className="mt-16 text-center">
+          <div className="h-px w-12 bg-mystic-gold/20 mx-auto mb-6"></div>
+          <p className="text-white/10 text-[9px] uppercase tracking-[0.6em] font-light">
+            Mystique & Elegance Portfolio © 2024
+          </p>
         </footer>
       </div>
     </div>

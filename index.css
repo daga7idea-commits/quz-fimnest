@@ -1,53 +1,89 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --mystic-black: #050206;
+    --mystic-purple: #12061f;
+    --mystic-gold: #c5a059;
+    --mystic-gold-bright: #f1e4c1;
+    --mystic-rose: #d4a5a5;
+  }
+
   body {
-    @apply bg-mystic-black text-white m-0 p-0 overflow-x-hidden font-cairo antialiased;
+    @apply bg-[var(--mystic-black)] text-white/90 m-0 p-0 overflow-x-hidden font-cairo antialiased selection:bg-mystic-gold/30;
     -webkit-tap-highlight-color: transparent;
   }
 }
 
 @layer components {
   .gold-gradient {
-    background: linear-gradient(135deg, #d4af37 0%, #f7ef8a 50%, #d4af37 100%);
+    background: linear-gradient(135deg, #c5a059 0%, #f1e4c1 50%, #c5a059 100%);
+    background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    animation: shine 5s linear infinite;
   }
 
   .glass-card {
-    @apply bg-mystic-purple/30 backdrop-blur-xl border border-mystic-gold/10 shadow-2xl shadow-black/50;
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)];
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    transform: skewX(-25deg);
+    transition: 0.75s;
+  }
+
+  .glass-card:hover::before {
+    left: 150%;
   }
 
   .premium-input {
-    @apply w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 focus:outline-none focus:border-mystic-gold/40 focus:bg-white/10 transition-all text-white text-right placeholder:text-white/20;
+    @apply w-full bg-white/[0.02] border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-mystic-gold/40 focus:bg-white/[0.05] transition-all duration-300 text-white text-right placeholder:text-white/20;
   }
 
   .premium-button {
-    @apply relative overflow-hidden bg-gradient-to-r from-mystic-gold to-mystic-rose text-mystic-black font-bold py-4 rounded-xl hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all active:scale-95 disabled:opacity-50;
+    @apply relative overflow-hidden bg-gradient-to-r from-[var(--mystic-gold)] to-[var(--mystic-rose)] text-[var(--mystic-black)] font-bold py-4.5 px-8 rounded-2xl transition-all duration-500 hover:shadow-[0_0_30px_rgba(197,160,89,0.3)] active:scale-[0.97] disabled:opacity-50 tracking-wide uppercase;
   }
 
   .blob {
-    @apply fixed rounded-full blur-[100px] pointer-events-none mix-blend-screen opacity-20;
-    animation: float 20s infinite alternate;
+    @apply fixed rounded-full blur-[120px] pointer-events-none mix-blend-screen opacity-15;
+    animation: float 25s infinite alternate ease-in-out;
   }
 }
 
 @keyframes float {
   0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(10%, 10%) scale(1.1); }
+  50% { transform: translate(5%, 10%) scale(1.1); }
+  100% { transform: translate(-5%, -5%) scale(0.9); }
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a050d;
+  background: var(--mystic-black);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(#d4af37, #c08497);
+  background: linear-gradient(transparent, var(--mystic-gold), transparent);
   border-radius: 10px;
 }
