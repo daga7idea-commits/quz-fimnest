@@ -7,64 +7,51 @@ interface QuizScreenProps {
 }
 
 const QuizScreen: React.FC<QuizScreenProps> = ({ onFinish }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<OptionId[]>([]);
-  const [animating, setAnimating] = useState(false);
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState<OptionId[]>([]);
+  const [anim, setAnim] = useState(false);
 
-  const currentQuestion = QUESTIONS[currentIndex];
-  const progress = ((currentIndex + 1) / QUESTIONS.length) * 100;
+  const q = QUESTIONS[current];
 
-  const handleSelect = (optionId: OptionId) => {
-    if (animating) return;
+  const handleSelect = (id: OptionId) => {
+    if (anim) return;
+    const newAnswers = [...answers, id];
+    setAnswers(newAnswers);
 
-    const newAnswers = [...selectedAnswers, optionId];
-    setSelectedAnswers(newAnswers);
-
-    if (currentIndex < QUESTIONS.length - 1) {
-      setAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
-        setAnimating(false);
-      }, 500);
+    if (current < QUESTIONS.length - 1) {
+      setAnim(true);
+      setTimeout(() => { setCurrent(current + 1); setAnim(false); }, 400);
     } else {
       onFinish(newAnswers);
     }
   };
 
   return (
-    <div className="w-full max-w-2xl">
-      {/* Progress Indicator */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-white/[0.03] z-50">
-        <div 
-          className="h-full bg-gradient-to-r from-mystic-gold via-mystic-gold-bright to-mystic-rose transition-all duration-700 ease-out shadow-[0_0_15px_rgba(197,160,89,0.3)]"
-          style={{ width: `${progress}%` }}
-        />
+    <div className="w-full">
+      <div className="flex justify-center gap-1.5 mb-12">
+        {QUESTIONS.map((_, i) => (
+          <div key={i} className={`h-1 rounded-full transition-all duration-500 ${i <= current ? 'w-6 bg-gold-primary shadow-[0_0_8px_var(--gold-primary)]' : 'w-2 bg-white/10'}`} />
+        ))}
       </div>
 
-      <div className={`transition-all duration-500 ease-out transform ${animating ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}>
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center px-4 py-1 rounded-full border border-mystic-gold/10 bg-mystic-gold/5 text-mystic-gold text-[10px] font-bold mb-8 tracking-[0.3em] uppercase">
-            Step {currentIndex + 1} / {QUESTIONS.length}
-          </div>
-          <h2 className="text-3xl md:text-5xl font-amiri font-bold leading-snug text-white/95 drop-shadow-2xl">
-            {currentQuestion.text}
-          </h2>
+      <div className={`transition-all duration-500 ${anim ? 'opacity-0 translate-x-10' : 'opacity-100 translate-x-0'}`}>
+        <div className="text-center mb-12">
+          <span className="text-[10px] font-bold text-gold-primary/40 uppercase tracking-[0.3em] mb-4 block">السؤال {current + 1}</span>
+          <h2 className="text-3xl md:text-4xl font-amiri font-bold leading-relaxed text-white">{q.text}</h2>
         </div>
 
-        <div className="grid gap-5 mt-12">
-          {currentQuestion.options.map((option) => (
+        <div className="flex flex-col gap-4">
+          {q.options.map((opt) => (
             <button
-              key={option.id}
-              onClick={() => handleSelect(option.id)}
-              className="w-full text-right p-7 rounded-[1.5rem] glass-card group flex items-center gap-7 transition-all duration-300 hover:bg-white/[0.05] hover:border-mystic-gold/20 active:scale-[0.98] border-white/5"
+              key={opt.id} onClick={() => handleSelect(opt.id)}
+              className="group w-full text-right p-6 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-gold-primary/30 hover:bg-white/[0.06] transition-all flex items-center gap-5"
             >
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-mystic-gold group-hover:bg-mystic-gold group-hover:text-mystic-black transition-all duration-500 font-bold text-xl shadow-inner">
-                {option.id}
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gold-primary font-bold border border-white/10 group-hover:bg-gold-primary group-hover:text-obsidian transition-colors">
+                {opt.id}
               </div>
-              <span className="text-lg md:text-xl text-white/60 group-hover:text-white transition-colors flex-grow leading-relaxed">
-                {option.text}
+              <span className="text-lg text-white/70 group-hover:text-white transition-colors flex-grow leading-relaxed font-medium">
+                {opt.text}
               </span>
-              <div className="w-1 h-0 bg-mystic-gold group-hover:h-8 transition-all duration-500 rounded-full"></div>
             </button>
           ))}
         </div>

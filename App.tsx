@@ -16,7 +16,6 @@ const App: React.FC = () => {
   const handleStartQuiz = async (data: UserData) => {
     setLoading(true);
     setUserData(data);
-
     try {
       await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: 'POST',
@@ -28,7 +27,6 @@ const App: React.FC = () => {
       });
       setStep(AppStep.QUIZ);
     } catch (error) {
-      console.error("Telegram error:", error);
       setStep(AppStep.QUIZ);
     } finally {
       setLoading(false);
@@ -40,59 +38,37 @@ const App: React.FC = () => {
     setStep(AppStep.RESULT);
   };
 
-  const calculatedResult = useMemo(() => {
+  const result = useMemo(() => {
     if (answers.length === 0) return null;
     const counts = answers.reduce((acc, curr) => {
       acc[curr] = (acc[curr] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
-
     let dominant: OptionId = 'ج';
     let max = 0;
-    (Object.keys(counts) as OptionId[]).forEach(key => {
-      if (counts[key] > max) {
-        max = counts[key];
-        dominant = key;
-      }
+    (Object.keys(counts) as OptionId[]).forEach(k => {
+      if (counts[k] > max) { max = counts[k]; dominant = k; }
     });
     return RESULTS[dominant];
   }, [answers]);
 
   return (
-    <div className="min-h-screen bg-[#050206] text-white selection:bg-mystic-gold/20 relative overflow-hidden font-cairo">
-      {/* Refined Background Elements */}
-      <div className="blob w-[800px] h-[800px] bg-purple-900/10 -top-[20%] -right-[10%]"></div>
-      <div className="blob w-[600px] h-[600px] bg-rose-900/5 -bottom-[10%] -left-[10%] delay-1000"></div>
-      
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center py-12 px-6">
-        <main className="w-full max-w-xl animate-fade-in flex flex-col items-center">
-          {step === AppStep.WELCOME && (
-            <WelcomeScreen onStart={handleStartQuiz} isLoading={loading} />
-          )}
-          
-          {step === AppStep.QUIZ && (
-            <QuizScreen onFinish={handleFinishQuiz} />
-          )}
+    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4 py-12">
+      {/* Decorative BG elements */}
+      <div className="blob-bg w-[400px] h-[400px] bg-gold-primary/10 -top-20 -right-20"></div>
+      <div className="blob-bg w-[300px] h-[300px] bg-rose-soft/5 bottom-0 -left-20"></div>
 
-          {step === AppStep.RESULT && calculatedResult && (
-            <ResultScreen 
-              result={calculatedResult} 
-              onReset={() => {
-                setStep(AppStep.WELCOME);
-                setAnswers([]);
-              }} 
-              userName={userData?.name || ''} 
-            />
-          )}
-        </main>
+      <main className="w-full max-w-xl z-10 animate-fade-up">
+        {step === AppStep.WELCOME && <WelcomeScreen onStart={handleStartQuiz} isLoading={loading} />}
+        {step === AppStep.QUIZ && <QuizScreen onFinish={handleFinishQuiz} />}
+        {step === AppStep.RESULT && result && (
+          <ResultScreen result={result} userName={userData?.name || ''} onReset={() => setStep(AppStep.WELCOME)} />
+        )}
+      </main>
 
-        <footer className="mt-16 text-center">
-          <div className="h-px w-12 bg-mystic-gold/20 mx-auto mb-6"></div>
-          <p className="text-white/10 text-[9px] uppercase tracking-[0.6em] font-light">
-            Mystique & Elegance Portfolio © 2024
-          </p>
-        </footer>
-      </div>
+      <footer className="mt-12 opacity-30 text-[10px] uppercase tracking-[0.4em] text-center font-light">
+        Loud Femininity • 2024
+      </footer>
     </div>
   );
 };
