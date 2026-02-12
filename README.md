@@ -1,11 +1,17 @@
-<div align="center">
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+# مقياس الأنوثة الصاخبة
 
-  <h1>Built with AI Studio</h2>
+تطبيق ويب تفاعلي مصمم بلمسات فاخرة لاستكشاف طاقة الأنوثة والهويات الطاقية لدى المستخدمات.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## التقنيات المستخدمة
+- React 19
+- TypeScript
+- Tailwind CSS
+- Node.js (Express integration ready)
+- Telegram Bot API
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
-
-</div>
+## هيكلة المشروع
+- `component/`: المكونات التفاعلية للواجهة.
+- `translations/`: النصوص والأسئلة والنتائج.
+- `types.ts`: تعريفات الأنواع البرمجية.
+- `constants.ts`: الثوابت والروابط.
