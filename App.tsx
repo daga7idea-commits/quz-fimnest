@@ -2,10 +2,11 @@
 import React, { useState, useMemo } from 'react';
 import { QUESTIONS, RESULTS } from './translations';
 import { AppStep, UserData, OptionId } from './types';
-import WelcomeScreen from './component/WelcomeScreen';
-import QuizScreen from './component/QuizScreen';
-import ResultScreen from './component/ResultScreen';
+import WelcomeScreen from './components/WelcomeScreen';
+import QuizScreen from './components/QuizScreen';
+import ResultScreen from './components/ResultScreen';
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from './constants';
+import './index.css';
 
 const App: React.FC = () => {
   const [step, setStep] = useState<AppStep>(AppStep.WELCOME);
@@ -18,19 +19,18 @@ const App: React.FC = () => {
     setUserData(data);
 
     try {
-      // إرسال البيانات لتليجرام (يمكن نقل هذا المسار لسيرفر Node.js حقيقي مستقبلاً)
       await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: TELEGRAM_CHAT_ID,
-          text: `الاسم: ${data.name}\nالحالة الاجتماعية: ${data.status}\nرقم الواتساب أو الإيميل: ${data.contact}`
+          text: `✨ عميلة جديدة ✨\n\n👤 الاسم: ${data.name}\n💍 الحالة: ${data.status}\n📱 التواصل: ${data.contact}`
         })
       });
       setStep(AppStep.QUIZ);
     } catch (error) {
-      console.error("Telegram notification failed:", error);
-      setStep(AppStep.QUIZ); // الاستمرار حتى لو فشل الإرسال
+      console.error("Telegram error:", error);
+      setStep(AppStep.QUIZ);
     } finally {
       setLoading(false);
     }
@@ -60,32 +60,37 @@ const App: React.FC = () => {
   }, [answers]);
 
   return (
-    <div className="min-h-screen bg-mystic-black text-white selection:bg-mystic-rose selection:text-white overflow-hidden relative font-cairo">
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-mystic-purple/20 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-mystic-rose/10 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2"></div>
+    <div className="min-h-screen bg-mystic-black text-white selection:bg-mystic-rose selection:text-white relative overflow-hidden font-cairo">
+      {/* Background Decor - Blobs */}
+      <div className="blob w-[600px] h-[600px] bg-mystic-purple/20 -top-[10%] -right-[10%]"></div>
+      <div className="blob w-[500px] h-[500px] bg-mystic-rose/10 -bottom-[10%] -left-[10%] delay-700"></div>
+      
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-6">
+        <main className="w-full max-w-lg animate-fade-in">
+          {step === AppStep.WELCOME && (
+            <WelcomeScreen onStart={handleStartQuiz} isLoading={loading} />
+          )}
+          
+          {step === AppStep.QUIZ && (
+            <QuizScreen onFinish={handleFinishQuiz} />
+          )}
 
-      <main className="max-w-xl mx-auto px-6 py-12 relative z-10 min-h-screen flex flex-col justify-center">
-        {step === AppStep.WELCOME && (
-          <WelcomeScreen onStart={handleStartQuiz} isLoading={loading} />
-        )}
-        
-        {step === AppStep.QUIZ && (
-          <QuizScreen onFinish={handleFinishQuiz} />
-        )}
+          {step === AppStep.RESULT && calculatedResult && (
+            <ResultScreen 
+              result={calculatedResult} 
+              onReset={() => {
+                setStep(AppStep.WELCOME);
+                setAnswers([]);
+              }} 
+              userName={userData?.name || ''} 
+            />
+          )}
+        </main>
 
-        {step === AppStep.RESULT && calculatedResult && (
-          <ResultScreen 
-            result={calculatedResult} 
-            onReset={() => setStep(AppStep.WELCOME)} 
-            userName={userData?.name || ''} 
-          />
-        )}
-      </main>
-
-      <footer className="absolute bottom-4 left-0 right-0 text-center text-xs text-white/30 font-light uppercase tracking-widest pointer-events-none">
-        Mystique & Elegance © 2024
-      </footer>
+        <footer className="mt-12 text-center text-white/10 text-[10px] uppercase tracking-[0.5em] font-light">
+          Mystique & Elegance Portfolio © 2024
+        </footer>
+      </div>
     </div>
   );
 };

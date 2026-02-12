@@ -1,6 +1,7 @@
 
+// Fix: Correct the import path for QUESTIONS from './constants' to './translations'
 import React, { useState } from 'react';
-import { QUESTIONS } from './constants';
+import { QUESTIONS } from './translations';
 import { OptionId } from './types';
 
 interface QuizScreenProps {
